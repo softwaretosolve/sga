@@ -1,8 +1,7 @@
 <?php
-require "conexiones/ConexionSGA.php";
+require_once "conexiones/ConexionSGA.php";
 
-function dbInsert($tabla, $data, &$msg = ''){
-	global $HOST, $USER, $PASSWORD, $DATABASE;
+function dbInsert($tabla, $data, &$msg = ''){	
 	
 	if (empty($tabla)){
 		$msg = "No se ha proporcionado el nombre de la tabla en la que se desea insertar.";
@@ -15,7 +14,7 @@ function dbInsert($tabla, $data, &$msg = ''){
 	}
 	
 	try{
-		$mysqli = new mysqli($HOST, $USER, $PASSWORD, $DATABASE);
+		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -51,8 +50,7 @@ function dbInsert($tabla, $data, &$msg = ''){
 	}
 }
 
-function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = true){
-	global $HOST, $USER, $PASSWORD, $DATABASE;
+function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = true){	
 	
 	if (empty($tabla)){
 		$msg = "No se ha proporcionado el nombre de la tabla que se desea actualizar.";
@@ -70,7 +68,7 @@ function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = tr
 	}
 	
 	try{
-		$mysqli = new mysqli($HOST, $USER, $PASSWORD, $DATABASE);
+		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -107,8 +105,7 @@ function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = tr
 	}
 }
 
-function dbDelete($tabla, $condiciones, &$msg = '', $checkEmptyWhere = true){
-	global $HOST, $USER, $PASSWORD, $DATABASE;
+function dbDelete($tabla, $condiciones, &$msg = '', $checkEmptyWhere = true){	
 	
 	if (empty($tabla)){
 		$msg = "No se ha proporcionado el nombre de la tabla de la que se desea eliminar filas.";
@@ -121,7 +118,7 @@ function dbDelete($tabla, $condiciones, &$msg = '', $checkEmptyWhere = true){
 	}
 	
 	try{
-		$mysqli = new mysqli($HOST, $USER, $PASSWORD, $DATABASE);
+		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
