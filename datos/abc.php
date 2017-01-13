@@ -14,7 +14,7 @@ function dbInsert($tabla, $data, &$msg = ''){
 	}
 	
 	try{
-		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
+		$mysqli = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -37,12 +37,12 @@ function dbInsert($tabla, $data, &$msg = ''){
 			$resultado = $mysqli->query($consulta);
 			
 			if (!$resultado){
-				$msg = "Falló la inserción: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;
-				return false;
+				$msg = "Falló la inserción: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;				
 			}else{
-				$msg = "Inserción ejecutada correctamente.";
-				return true;
+				$msg = $mysqli->affected_rows;				
 			}
+			mysqli_close($mysqli);
+			return $resultado;
 		}
 	}catch(Exception $ex){
 		$msg = "Falló la inserción: (" .$ex->getMessage();
@@ -63,12 +63,12 @@ function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = tr
 	}
 	
 	if (empty($condiciones) && $checkEmptyWhere){
-		$msg = "No se han proporcionado una condiciones para las filas que se van a actualizar.";
+		$msg = "No se han proporcionado condiciones para las filas que se van a actualizar.";
 		return false;
 	}
 	
 	try{
-		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
+		$mysqli = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -84,20 +84,21 @@ function dbUpdate($tabla, $data, $condiciones, &$msg = '', $checkEmptyWhere = tr
 			}
 			
 			$conds = "1 = 1";
-			foreach ($condiciones as $clave => $valor) {
-				$conds = "$conds and $clave = $valor";	
-			}
+			if (!empty($condiciones))
+				foreach ($condiciones as $clave => $valor) {
+					$conds = "$conds and $clave = $valor";	
+				}
 					
 			$consulta = "update $tabla set $campos where $conds";
 			$resultado = $mysqli->query($consulta);
 			
 			if (!$resultado){
-				$msg = "Falló la actualización: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;
-				return false;
+				$msg = "Falló la actualización: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;				
 			}else{
-				$msg = "Actualización ejecutada correctamente.";
-				return true;
+				$msg = $mysqli->affected_rows;;				
 			}
+			mysqli_close($mysqli);
+			return $resultado;
 		}
 	}catch(Exception $ex){
 		$msg = "Falló la actualización: " .$ex->getMessage();
@@ -118,7 +119,7 @@ function dbDelete($tabla, $condiciones, &$msg = '', $checkEmptyWhere = true){
 	}
 	
 	try{
-		$connexion = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
+		$mysqli = new mysqli(DBHOST, DBUSER, DBPWD, DBNAME);
 		
 		if ($mysqli->connect_errno) {
 			$msg = "Falló la conexión a MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -126,20 +127,21 @@ function dbDelete($tabla, $condiciones, &$msg = '', $checkEmptyWhere = true){
 		}else{										
 			
 			$conds = "1 = 1";
-			foreach ($condiciones as $clave => $valor) {
-				$conds = "$conds and $clave = $valor";	
-			}
+			if (!empty($condiciones))
+				foreach ($condiciones as $clave => $valor) {
+					$conds = "$conds and $clave = $valor";	
+				}
 					
 			$consulta = "delete from $tabla where $conds";
 			$resultado = $mysqli->query($consulta);
 			
 			if (!$resultado){
-				$msg = "Falló la eliminación: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;
-				return false;
+				$msg = "Falló la eliminación: (" . $mysqli->errno . ") " . $mysqli->error . "consulta: " . $consulta;				
 			}else{
-				$msg = "Eliminación ejecutada correctamente.";
-				return true;
+				$msg = $mysqli->affected_rows;				
 			}
+			mysqli_close($mysqli);
+			return $resultado;
 		}
 	}catch(Exception $ex){
 		$msg = "Falló la eliminación: " .$ex->getMessage();

@@ -1,7 +1,7 @@
 <?php
 require_once "conexiones/ConexionSGA.php";
 
-function dbSelect($tabla, $campos = '*', $condiciones = '', &$msg = '', $tipoResultado = MYSQLI_ASSOC){	
+function dbSelect($tabla, $campos = '*', $condiciones = '', &$msg = '', $tipoResultado = MYSQLI_BOTH){	
 	
 	if (empty($tabla)){
 		$msg = "No se ha proporcionado el nombre de la tabla de la que se va a seleccionar.";
@@ -26,12 +26,10 @@ function dbSelect($tabla, $campos = '*', $condiciones = '', &$msg = '', $tipoRes
 			$resultado = mysqli_query($conexion , $consulta);
 			
 			$datos = mysqli_fetch_all($resultado, $tipoResultado);
-
-			mysqli_free_result($resultado);
-
-			mysqli_close($conexion);
 			
-			$msg = "Consulta realizada correctamente";
+			$msg = $conexion->affected_rows;
+			mysqli_free_result($resultado);			
+			mysqli_close($conexion);					
 			return $datos;
 		}
 	}catch(Exception $ex){
@@ -40,4 +38,12 @@ function dbSelect($tabla, $campos = '*', $condiciones = '', &$msg = '', $tipoRes
 	}
 }
 
+function selectByID($tabla, $id, $campos = '*', &$msg = '', $tipoResultado = MYSQLI_BOTH){
+	$cond = ["ID" => $id];
+	$res = dbSelect($tabla, $campos, $cond, $msg, $tipoResultado);
+	if ($res)
+		return $res[0];
+	else
+		return $res;
+}
 ?>
